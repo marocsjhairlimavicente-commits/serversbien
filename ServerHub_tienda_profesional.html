@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ServerHub | Tienda</title>
+<style>
+:root{
+ --negro:#070707;--negro2:#101012;--plomo:#1c1c20;--plomo2:#29292e;
+ --rojo:#e10616;--rojo2:#ff2638;--blanco:#fff;--gris:#a7a7ae;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Inter,Segoe UI,Arial,sans-serif;background:var(--negro);color:var(--blanco)}
+button{font:inherit;cursor:pointer}
+.topbar{height:74px;background:#09090a;border-bottom:1px solid #2b2b30;display:flex;align-items:center;justify-content:space-between;padding:0 6%;position:sticky;top:0;z-index:20}
+.logo{font-size:27px;font-weight:900;letter-spacing:-1px}.logo span{color:var(--rojo)}
+.nav{display:flex;gap:27px}.nav a{color:#bbb;text-decoration:none;font-size:14px}.nav a:hover{color:white}
+.cart-btn{background:var(--rojo);color:white;border:0;border-radius:9px;padding:11px 17px;font-weight:800}
+.hero{min-height:455px;padding:65px 7%;display:grid;grid-template-columns:1.05fr .95fr;gap:55px;align-items:center;background:radial-gradient(circle at 80% 30%,#490914 0,#171012 30%,#070707 72%)}
+.eyebrow{display:inline-block;padding:7px 12px;background:#33090f;border:1px solid #6d1722;color:#ff6575;border-radius:20px;font-size:11px;font-weight:800;letter-spacing:1px;margin-bottom:17px}
+.hero h1{font-size:55px;line-height:1.02;letter-spacing:-2px}.hero h1 span{color:var(--rojo2)}
+.hero p{color:var(--gris);font-size:17px;line-height:1.7;max-width:620px;margin-top:18px}
+.hero-btn{display:inline-block;margin-top:27px;padding:13px 21px;background:var(--rojo);border-radius:9px;color:white;text-decoration:none;font-weight:800}
+.hero-img{height:320px;border:1px solid #404047;border-radius:17px;overflow:hidden;box-shadow:0 25px 70px #000}
+.hero-img img{width:100%;height:100%;object-fit:cover;filter:brightness(.75) contrast(1.1)}
+
+.content{padding:48px 7%}
+.title{display:flex;justify-content:space-between;align-items:end;margin-bottom:27px}.title h2{font-size:30px}.title p{color:#888;margin-top:7px}
+.filters{display:flex;gap:9px;flex-wrap:wrap}.filter{padding:8px 13px;background:#1d1d21;color:#aaa;border:1px solid #35353b;border-radius:8px}.filter.active,.filter:hover{background:var(--rojo);color:white;border-color:var(--rojo)}
+.products{display:grid;grid-template-columns:repeat(3,1fr);gap:21px}
+.card{background:var(--plomo);border:1px solid #35353b;border-radius:15px;overflow:hidden;transition:.25s}.card:hover{transform:translateY(-5px);border-color:#9c202d;box-shadow:0 15px 35px #000}
+.card-img{height:185px;position:relative}.card-img img{width:100%;height:100%;object-fit:cover}.badge{position:absolute;top:12px;left:12px;background:var(--rojo);padding:6px 9px;border-radius:6px;font-size:10px;font-weight:800}
+.card-body{padding:20px}.category{color:#e94b58;font-size:11px;font-weight:800;text-transform:uppercase}.card h3{font-size:19px;margin:7px 0}.card p{color:#999;font-size:13px;line-height:1.55;min-height:41px}.bottom{display:flex;align-items:center;justify-content:space-between;margin-top:18px}.price{font-size:23px;font-weight:900}.price small{font-size:11px;color:#888;font-weight:400}.buy{background:var(--rojo);color:#fff;border:0;padding:10px 13px;border-radius:8px;font-weight:800}.buy:hover{background:var(--rojo2)}
+
+.benefits{background:#0d0d0f;border-top:1px solid #27272b;border-bottom:1px solid #27272b;padding:35px 7%;display:grid;grid-template-columns:repeat(3,1fr);gap:25px}.benefit{display:flex;gap:13px;align-items:center}.icon{width:45px;height:45px;background:#25252a;border:1px solid #404047;border-radius:9px;display:grid;place-items:center;font-size:20px}.benefit b{display:block;font-size:14px}.benefit span{font-size:12px;color:#888}
+
+footer{padding:30px 7%;text-align:center;color:#666;font-size:12px}
+
+.cart-modal{display:none;position:fixed;inset:0;background:#000c;z-index:50;align-items:center;justify-content:center}.cart-modal.show{display:flex}
+.cart-box{width:min(500px,92%);background:#17171a;border:1px solid #414148;border-radius:15px;padding:25px;box-shadow:0 25px 80px #000}
+.cart-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px}.close{background:#303036;color:#fff;border:0;border-radius:7px;padding:6px 10px}
+.item{display:flex;justify-content:space-between;gap:15px;padding:13px 0;border-bottom:1px solid #333}.item span{color:#ddd}.item b{white-space:nowrap}.total{display:flex;justify-content:space-between;margin-top:20px;font-size:20px}.checkout{width:100%;margin-top:20px;background:var(--rojo);color:#fff;border:0;border-radius:9px;padding:13px;font-weight:800}
+
+@media(max-width:900px){.hero{grid-template-columns:1fr}.products{grid-template-columns:1fr 1fr}.benefits{grid-template-columns:1fr}}
+@media(max-width:600px){.nav{display:none}.hero h1{font-size:40px}.hero{padding:45px 5%}.content{padding:38px 5%}.products{grid-template-columns:1fr}.topbar{padding:0 5%}.hero-img{height:250px}}
+</style>
+</head>
+<body>
+
+<header class="topbar">
+ <div class="logo">Server<span>Hub</span></div>
+ <nav class="nav">
+  <a href="#inicio">Inicio</a><a href="#servicios">Servicios</a><a href="#beneficios">Beneficios</a>
+ </nav>
+ <button class="cart-btn" onclick="abrirCarrito()">🛒 Carrito <span id="contador">0</span></button>
+</header>
+
+<section class="hero" id="inicio">
+ <div>
+  <span class="eyebrow">TECNOLOGÍA PARA TU NEGOCIO</span>
+  <h1>Todo lo que necesitas para <span>hacer crecer</span> tu negocio.</h1>
+  <p>Alquila servidores, programas y sistemas empresariales desde un solo lugar. Soluciones para tiendas, boticas, restaurantes y todo tipo de negocios.</p>
+  <a class="hero-btn" href="#servicios">Explorar servicios →</a>
+ </div>
+ <div class="hero-img">
+  <img src="https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=1000&q=80" alt="Servidores">
+ </div>
+</section>
+
+<section class="content" id="servicios">
+ <div class="title">
+  <div><h2>Servicios disponibles</h2><p>Elige el sistema que mejor se adapte a tu negocio.</p></div>
+  <div class="filters">
+   <button class="filter active" onclick="filtrar('todos',this)">Todos</button>
+   <button class="filter" onclick="filtrar('sistema',this)">Sistemas</button>
+   <button class="filter" onclick="filtrar('servidor',this)">Servidores</button>
+  </div>
+ </div>
+ <div class="products" id="productos"></div>
+</section>
+
+<section class="benefits" id="beneficios">
+ <div class="benefit"><div class="icon">⚡</div><div><b>Activación rápida</b><span>Comienza a utilizar tu servicio rápidamente.</span></div></div>
+ <div class="benefit"><div class="icon">🔒</div><div><b>Servicio seguro</b><span>Protección y administración de tus sistemas.</span></div></div>
+ <div class="benefit"><div class="icon">🛠️</div><div><b>Soporte técnico</b><span>Te ayudamos cuando lo necesites.</span></div></div>
+</section>
+
+<footer>© 2026 ServerHub · Servidores, software y sistemas empresariales</footer>
+
+<div class="cart-modal" id="modal">
+ <div class="cart-box">
+  <div class="cart-head"><h2>🛒 Mi carrito</h2><button class="close" onclick="cerrarCarrito()">✕</button></div>
+  <div id="items"></div>
+  <div class="total"><span>Total mensual</span><b id="total">S/ 0.00</b></div>
+  <button class="checkout" onclick="finalizar()">Continuar con el alquiler</button>
+ </div>
+</div>
+
+<script>
+const productos=[
+ {n:"Sistema POS para Tiendas",c:"sistema",d:"Ventas, productos, inventario, clientes y reportes.",p:249,i:"https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?auto=format&fit=crop&w=800&q=80",b:"MÁS VENDIDO"},
+ {n:"Sistema para Boticas",c:"sistema",d:"Control de stock, ventas, productos y vencimientos.",p:299,i:"https://images.unsplash.com/photo-1585435557343-3b092031a831?auto=format&fit=crop&w=800&q=80",b:"POPULAR"},
+ {n:"ERP para Negocios",c:"sistema",d:"Compras, ventas, inventario y administración.",p:499,i:"https://images.unsplash.com/photo-1556761175-b413da4baf72?auto=format&fit=crop&w=800&q=80",b:"PRO"},
+ {n:"Servidor Cloud Pro",c:"servidor",d:"Servidor virtual para aplicaciones y sistemas empresariales.",p:399,i:"https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=800&q=80",b:"RECOMENDADO"},
+ {n:"Servidor Cloud Básico",c:"servidor",d:"Una opción económica para pequeños negocios.",p:199,i:"https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=800&q=80",b:"ECONÓMICO"},
+ {n:"Sistema de Alquiler",c:"sistema",d:"Contratos, clientes, pagos y renovaciones.",p:349,i:"https://images.unsplash.com/photo-1554224155-6726b3ff858f?auto=format&fit=crop&w=800&q=80",b:"NUEVO"}
+];
+let carrito=[];
+function mostrar(lista=productos){
+ const box=document.getElementById("productos");
+ box.innerHTML=lista.map((x,i)=>`<article class="card"><div class="card-img"><img src="${x.i}" alt="${x.n}"><span class="badge">${x.b}</span></div><div class="card-body"><span class="category">${x.c}</span><h3>${x.n}</h3><p>${x.d}</p><div class="bottom"><div class="price">S/ ${x.p}<small> / mes</small></div><button class="buy" onclick="agregar(${productos.indexOf(x)})">Alquilar</button></div></div></article>`).join("");
+}
+function filtrar(tipo,btn){document.querySelectorAll(".filter").forEach(x=>x.classList.remove("active"));btn.classList.add("active");mostrar(tipo==="todos"?productos:productos.filter(x=>x.c===tipo))}
+function agregar(i){carrito.push(productos[i]);document.getElementById("contador").textContent=carrito.length}
+function abrirCarrito(){document.getElementById("modal").classList.add("show");renderCarrito()}
+function cerrarCarrito(){document.getElementById("modal").classList.remove("show")}
+function renderCarrito(){const box=document.getElementById("items");if(!carrito.length){box.innerHTML='<p style="color:#888">Tu carrito está vacío.</p>'}else{box.innerHTML=carrito.map(x=>`<div class="item"><span>${x.n}</span><b>S/ ${x.p}</b></div>`).join("")}document.getElementById("total").textContent="S/ "+carrito.reduce((a,x)=>a+x.p,0).toFixed(2)}
+function finalizar(){if(!carrito.length)return alert("Agrega un servicio al carrito.");alert("Solicitud de alquiler enviada correctamente.");}
+mostrar();
+</script>
+</body>
+</html>
